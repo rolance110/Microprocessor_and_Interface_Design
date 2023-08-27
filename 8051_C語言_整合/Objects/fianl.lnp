@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\final.obj" 
+TO ".\Objects\fianl" 
+PRINT(".\Listings\fianl.m51") RAMSIZE(256) 

@@ -1,0 +1,39 @@
+C51 COMPILER V9.60.0.0   LAB9T                                                             11/28/2022 16:34:08 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LAB9T
+OBJECT MODULE PLACED IN .\Objects\lab9t.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lab9t.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\lab
+                    -9t.lst) TABS(2) OBJECT(.\Objects\lab9t.obj)
+
+line level    source
+
+   1          #include <regx51.h>
+   2          void main( )
+   3          {
+   4   1         while(1)
+   5   1       {
+   6   2         P2_0=(P1>28)?0:1;
+   7   2         P2_1=(P1>28*2)?0:1;
+   8   2         P2_2=(P1>28*3)?0:1;
+   9   2         P2_3=(P1>28*4)?0:1;
+  10   2         P2_4=(P1>28*5)?0:1;
+  11   2         P2_5=(P1>28*6)?0:1;
+  12   2         P2_6=(P1>28*7)?0:1;
+  13   2         P2_7=(P1>28*8)?0:1;
+  14   2       }
+  15   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    139    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

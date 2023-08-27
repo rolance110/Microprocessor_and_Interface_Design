@@ -1,0 +1,443 @@
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\TONE.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE TONE.A51 SET(SMALL) DEBUG PRINT(.\Listings\TONE.lst) OBJECT(.\Objects\T
+                      ONE.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1             ORG     0
+0000 806E              2         JMP     MAIN    ; main function
+                       3     
+                       4         
+0003                   5         ORG     03H     
+0003 C0D0              6         PUSH    PSW
+0005 C0E0              7         PUSH    ACC
+0007 11F9              8         CALL COUNT_DOWN
+                       9             
+0009                  10     SHOW_SEG0:
+0009 9001AC           11         MOV DPTR, #SHOW_TBL ; move to seven seg table
+000C D2D3             12         SETB RS0            ; switch to RB1
+                      13             
+000E C2B4             14             CLR P3.4           
+0010 E511             15         MOV A,11H           
+0012 93               16         MOVC A, @A+DPTR    
+0013 F590             17         MOV P1, A           
+0015 3197             18         CALL DEL_330_US    
+0017 D2B4             19         SETB P3.4  
+                      20             
+0019 C2B5             21         CLR P3.5            ; ======== tens digit ===================| 
+001B E8               22         MOV A, R0           ; get value from R0                      |
+001C 93               23         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+001D F590             24         MOV P1, A           ; from SHOW_TBL table.                   |
+001F 3197             25         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0021 3197             26         CALL DEL_330_US
+0023 D2B5             27             SETB P3.5           ; =======================================|
+                      28             
+0025 C2B6             29         CLR P3.6            ; ======== units digit ==================| 
+0027 E9               30         MOV A, R1           ; set P3.6 to low, get value from R1,    |
+0028 93               31         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0029 F590             32         MOV P1, A           ; from SHOW_TBL table.                   |
+002B 3197             33         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+002D 3197             34         CALL DEL_330_US
+002F D2B6             35             SETB P3.6           ; =======================================|
+                      36             
+0031 C2B7             37         CLR P3.7            ; ======== decimal ======================|
+0033 EA               38         MOV A, R2           ; set P3.6 to low, get value from R1,    |
+0034 93               39         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0035 F590             40         MOV P1, A           ; from SHOW_TBL table.                   |
+0037 3197             41         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0039 3197             42             CALL DEL_330_US
+003B D2B7             43         SETB P3.7           ; ======== decimal ======================|
+                      44             
+003D 80CA             45             JMP SHOW_SEG0
+                      46             
+003F D0E0             47         POP     ACC
+0041 D0D0             48         POP     PSW
+0043 32               49         RETI
+                      50             ; =============== ISR for saving =======================================
+                      51     ; =============== bottom =======================================        
+0044                  52     MARQUEE:
+0044 C0D0             53             PUSH PSW    ; push PSW
+0046 751404           54             MOV 14H,#4
+0049 D2D3             55         SETB RS0    ; switch to RB1
+                      56     
+004B                  57     LOOP3:  
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     2
+
+004B E8               58             MOV A,R0
+004C F511             59             MOV 11H,A
+                      60             
+004E E9               61             MOV A,R1
+004F F8               62             MOV R0,A
+                      63             
+0050 EA               64             MOV A,R2
+0051 F9               65             MOV R1,A
+0052 7A0A             66             MOV R2,#10
+                      67              
+0054 7512FA           68         MOV 12H, #250        ; just a counter
+                      69             ;MOV 13H, #250        ; just a counter
+0057                  70     SHOW_LOOP0: 
+0057 3164             71         CALL SHOW_SEG2       ; show seven seg, NOTE: here takes about 1 ms
+0059 D512FB           72         DJNZ 12H, SHOW_LOOP0  ; loop 100 times, so takes about 100 ms, now we successfully dela
+                             y 0.1 second         
+                      73             ;DJNZ 13H, SHOW_LOOP0  ;
+                      74             
+005C D514EC           75             DJNZ 14H, LOOP3  ; 
+                      76             
+                      77             
+005F D280             78             SETB P0.0
+0061 751100           79             MOV 11H,#0
+0064 7A00             80             MOV R2,#0
+0066 7900             81             MOV R1,#0
+0068 7800             82             MOV R0,#0
+006A C2D3             83             CLR RS0
+                      84             
+006C D0D0             85             POP PSW     ; pop PSW
+006E 801D             86             JMP START_SCAN
+                      87     ; =============== bottom =======================================        
+                      88             
+0070                  89     MAIN:   ; ======== init ========
+0070 758132           90         MOV SP, #32H        
+0073 75A881           91         MOV IE, #10000001B  
+0076 D288             92         SETB IT0            ; init interrupt
+                      93         ; ======== init seven segment ======== 
+0078 D2D3             94         SETB RS0    ; using RB1
+007A 7800             95         MOV R0, #0  ; R0 ~ R6 in RB1 set to 0
+007C 7900             96         MOV R1, #0
+007E 7A00             97         MOV R2, #0
+0080 7C00             98         MOV R4, #0
+0082 7D00             99         MOV R5, #0
+0084 7E00            100         MOV R6, #0
+0086 751100          101             MOV 11H,#0
+0089 C2D3            102         CLR RS0     ; switch back to RB0
+                     103             
+008B D280            104             SETB P0.0               ;set p1.0 to high
+                     105         ; ======== finish init =======
+                     106     ; ############# MAIN LOOP START HERE ###############
+008D                 107     START_SCAN:             ; ======== start keyboard scanning
+008D 7800            108         MOV R0, #0          ; keyboard scanning index init to 0
+008F 7904            109         MOV R1, #4          ; scan 4 row
+0091 7AF7            110         MOV R2, #11110111B  ; 
+0093                 111     SCAN:                   ; =========== keyboard scanning =============|
+0093 3080AE          112         JNB P0.0,MARQUEE    ;jump into marquee when p1.0 is low (if put down bottom)///////////
+                             ////////////////
+                     113             
+0096 EA              114             MOV A, R2           ;                                            |
+0097 F5A0            115         MOV P2, A           ; just like lab 2, send scanning signal      |
+0099 30A715          116         JNB P2.7, KEY_IN    ; to P2, check if P2.7 - P2.4 is low,        |
+009C 08              117         INC R0              ; and use R0 as counter to determined        |
+009D 30A611          118         JNB P2.6, KEY_IN    ; whitch button was pressed.                 |
+00A0 08              119         INC R0              ;                                            |
+00A1 30A50D          120         JNB P2.5, KEY_IN    ; if pressed, jump to KEYIN to handle,       |
+00A4 08              121         INC R0              ; if no one pressed, rotate right            |
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     3
+
+00A5 30A409          122         JNB P2.4, KEY_IN    ; scanning signal to scan next row.          |
+00A8 08              123         INC R0              ; after scanning four row, we                |
+00A9 03              124         RR A                ; finished scanning process.                 |
+00AA FA              125         MOV R2, A           ;                                            |
+00AB D9E6            126         DJNZ R1, SCAN       ; ===========================================|
+00AD                 127     KEY_OUT:                ; ======== finish scanning keyboard, now display seven seg
+00AD 3131            128         CALL SHOW_SEG       ; ****** here show seven seg *******
+00AF 80DC            129         SJMP START_SCAN     ; jump to scan keyboard 
+                     130     ; ############# MAIN LOOP END HERE #################
+                     131     
+                     132     ; ############# KEY IN HANDLER #####################
+00B1                 133     KEY_IN:  
+00B1 3124            134         CALL DEL_300_MS     ; debounce
+                     135     
+00B3 90019C          136         MOV DPTR, #KEYB_TBL ; ========================================|
+00B6 E8              137         MOV A, R0           ; get witch key clicked by KEYB_TBL table |
+00B7 93              138         MOVC A, @A+DPTR     ; ========================================|
+                     139                
+00B8 B40C02          140         CJNE A, #0CH, NEXT1 ; check if press 'C', if not, jump to NEXT1
+00BB 803C            141         JMP COUNT_DOWN      ; press 'C', jump to COUNT_DOWN
+00BD                 142     NEXT1:  
+00BD B40A02          143         CJNE A, #0AH, NEXT2 ; check if press 'A', if not, jump to NEXT2
+00C0 8009            144         JMP INC_CURRENT     ; press 'A', jump to COUNT_DOWN
+00C2                 145     NEXT2:  
+00C2 B40B02          146         CJNE A, #0BH, NEXT3 ; check if press 'B', if not, jump to NEXT3
+00C5 8011            147         JMP DEC_CURRENT     ; press 'B', jump to COUNT_DOWN
+00C7                 148     NEXT3:  
+00C7 11E9            149         CALL SAVE_KEY_IN     ; press number (0~9), handle it. 
+00C9 80E2            150         JMP KEY_OUT         ; jump to KEY_OUT (HACK: if press D E F, I dont care what will happ
+                             en)
+                     151     ; ############# KEY IN HANDLER FINISHED #####################
+                     152     
+                     153     ; ############# INCREASE / DECREASE HANDLER #################
+00CB                 154     INC_CURRENT:
+00CB C0D0            155         PUSH PSW    ; push PSW 
+00CD D2D3            156         SETB RS0    ; switch to RB1
+00CF 09              157         INC R1      ; increase R1 (units digit)
+00D0 B90A12          158         CJNE R1, #10, POP_AND_OUT ; if R1 != 10, jump out
+00D3 7900            159         MOV R1, #0  ; R1 == 10, set to 0 and have to increase R0 
+00D5 08              160         INC R0      ; increase R0 (tens digit)
+00D6 800D            161         JMP POP_AND_OUT ; jump out
+                     162     
+00D8                 163     DEC_CURRENT:
+00D8 C0D0            164         PUSH PSW    ; push PSW 
+00DA D2D3            165         SETB RS0    ; switch to RB1
+00DC 19              166         DEC R1      ; decrease R1 (units digit)
+00DD B9FF05          167         CJNE R1, #-1, POP_AND_OUT ; if R1 != -1, jump out (-1 == 255 == 11111111B)
+00E0 7909            168         MOV R1, #9  ; R1 == -1, set to 9 and have to decrease R0 
+00E2 18              169         DEC R0      ; decrease R0 (tens digit)
+00E3 8000            170         JMP POP_AND_OUT ; jump out
+                     171     
+00E5                 172     POP_AND_OUT: ; just pop and out
+00E5 D0D0            173         POP PSW
+00E7 80C4            174         JMP KEY_OUT
+                     175     ; ############# INCREASE / DECREASE HANDLER FINISHED #############
+                     176     
+                     177     ; ############# SAVE KEY IN ############
+00E9                 178     SAVE_KEY_IN:    ; NOTE: now keyboard value saved in A
+00E9 C0D0            179         PUSH PSW    ; push PSW
+00EB D2D3            180         SETB RS0    ; switch to RB1
+                     181             
+00ED F510            182             MOV 10H,A
+                     183             
+00EF E9              184             MOV A,R1
+00F0 F8              185             MOV R0,A
+                     186             
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     4
+
+00F1 EA              187             MOV A,R2
+00F2 F9              188             MOV R1,A
+                     189             
+00F3 E510            190             MOV A,10H
+00F5 FA              191         MOV R2,A   ;A  -> R2 
+                     192         
+00F6 D0D0            193         POP PSW     ; pop PSW
+00F8 22              194         RET
+                     195     ; ############# SAVE KEY IN FINISHED ###
+                     196     
+                     197     ; ############# COUNT DOWN (press C) ###############
+00F9                 198     COUNT_DOWN:
+00F9 C0D0            199         PUSH PSW    ; push PSW
+00FB D2D3            200         SETB RS0    ; switch to RB1
+                     201     
+00FD                 202     DECREASE_LOOP:  
+00FD 7B64            203         MOV R3, #100        ; just a counter
+00FF                 204     SHOW_LOOP: 
+00FF 3131            205         CALL SHOW_SEG       ; show seven seg, NOTE: here takes about 1 ms
+0101 DBFC            206         DJNZ R3, SHOW_LOOP  ; loop 100 times, so takes about 100 ms, now we successfully delay 
+                             0.1 second 
+                     207         
+                     208     ; ------------- now decrease seven seg value ------------
+0103 EA              209         MOV A, R2           ; first for R2 (decimal value)
+0104 6003            210         JZ  DECREASE_R1     ; if R2 == 0, jump to DECREASE_R1 (JZ jump if A == 0)
+0106 1A              211         DEC R2              ; R2 != 0, decrease
+0107 80F4            212         JMP DECREASE_LOOP   ; back to decrease loop
+0109                 213     DECREASE_R1:
+0109 E9              214         MOV A, R1           ; for R1 (units value)
+010A 6005            215         JZ  DECREASE_R0     ; if R1 == 0, jump to DECREASE_R0 (JZ jump if A == 0)
+010C 19              216         DEC R1              ; R1 != 0, decrease
+010D 7A09            217         MOV R2, #9          ; set R2 = 9
+010F 80EC            218         JMP DECREASE_LOOP   ; back to decrease loop
+0111                 219     DECREASE_R0:
+0111 E8              220         MOV A, R0           ; for R0 (tens value)
+0112 6007            221         JZ ALL_ZERO         ; if R0 == 0, finish down count
+0114 18              222         DEC R0              ; R0 != 0, decrease
+0115 7909            223         MOV R1, #9          ; set R1 = 9
+0117 7A09            224         MOV R2, #9          ; set R2 = 9
+0119 80E2            225         JMP DECREASE_LOOP   ; back to decrease loop
+                     226     ; ------------- decrease seven seg value ------------
+011B                 227     ALL_ZERO:
+011B EC              228         MOV A, R4   ; --- show value that saved by PSW (default 00.0) ---
+011C F8              229         MOV R0, A   ; R4 -> R0
+011D ED              230         MOV A, R5   ;
+011E F9              231         MOV R1, A   ; R5 -> R1
+011F EE              232         MOV A, R6   ;
+0120 FA              233         MOV R2, A   ; R6 -> R2
+0121 D0D0            234         POP PSW
+                     235         
+0123 22              236             RET 
+                     237     ; ############# COUNT DOWN FINISHED #############
+                     238     
+                     239     ; ====== delay 300 ms for debounce ======
+0124 7D03            240     DEL_300_MS: MOV R5, #3
+0126 7EC8            241     DEL_100_MS: MOV R6, #200
+0128 7FFA            242     DEL_500_US: MOV R7, #250
+012A DFFE            243                 DJNZ R7, $
+012C DEFA            244                 DJNZ R6, DEL_500_US 
+012E DDF6            245                 DJNZ R5, DEL_100_MS 
+0130 22              246                 RET 
+                     247     ; ======  end for delay 300 ms ======
+                     248     
+                     249     
+                     250     
+                     251     ; show seven seg, takes about 1 ms
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     5
+
+0131                 252     SHOW_SEG:
+0131 9001AC          253         MOV DPTR, #SHOW_TBL ; move to seven seg table
+0134 C0D0            254         PUSH PSW            ; push PSW
+0136 D2D3            255         SETB RS0            ; switch to RB1
+                     256             
+0138 C2B4            257             CLR P3.4            ; ======== tens digit ===================| 
+013A E511            258         MOV A,11H           ; get value from R0                      |
+013C 93              259         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+013D F590            260         MOV P1, A           ; from SHOW_TBL table.                   |
+013F 3197            261         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0141 D2B4            262         SETB P3.4  
+                     263             
+                     264             
+                     265             
+0143 C2B5            266         CLR P3.5            ; ======== tens digit ===================| 
+0145 E8              267         MOV A, R0           ; get value from R0                      |
+0146 93              268         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0147 F590            269         MOV P1, A           ; from SHOW_TBL table.                   |
+0149 3197            270         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+014B D2B5            271         SETB P3.5           ; =======================================|
+                     272             
+014D C2B6            273         CLR P3.6            ; ======== units digit ==================| 
+014F E9              274         MOV A, R1           ; set P3.6 to low, get value from R1,    |
+0150 93              275         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0151 F590            276         MOV P1, A           ; from SHOW_TBL table.                   |
+0153 3197            277         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0155 D2B6            278         SETB P3.6           ; =======================================|
+                     279             
+0157 C2B7            280         CLR P3.7            ; ======== decimal ======================|
+0159 EA              281         MOV A, R2           ; set P3.6 to low, get value from R1,    |
+015A 93              282         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+015B F590            283         MOV P1, A           ; from SHOW_TBL table.                   |
+015D 3197            284         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+015F D2B7            285         SETB P3.7           ; ======== decimal ======================|
+                     286             
+0161 D0D0            287         POP PSW             ; pop PSW 
+0163 22              288         RET
+                     289             
+0164                 290     SHOW_SEG2:
+0164 9001AC          291         MOV DPTR, #SHOW_TBL ; move to seven seg table
+0167 C0D0            292         PUSH PSW            ; push PSW
+0169 D2D3            293         SETB RS0            ; switch to RB1
+                     294             
+016B C2B4            295             CLR P3.4            ; ======== tens digit ===================| 
+016D E511            296         MOV A,11H           ; get value from R0                      |
+016F 93              297         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0170 F590            298         MOV P1, A           ; from SHOW_TBL table.                   |
+0172 3197            299         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0174 D2B4            300         SETB P3.4           ; =======================================|
+                     301             
+                     302             
+0176 C2B5            303         CLR P3.5            ; ======== tens digit ===================| 
+0178 E8              304         MOV A, R0           ; get value from R0                      |
+0179 93              305         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+017A F590            306         MOV P1, A           ; from SHOW_TBL table.                   |
+017C 3197            307         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+017E D2B5            308         SETB P3.5           ; =======================================|
+                     309             
+0180 C2B6            310         CLR P3.6            ; ======== units digit ==================| 
+0182 E9              311         MOV A, R1           ; set P3.6 to low, get value from R1,    |
+0183 93              312         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+0184 F590            313         MOV P1, A           ; from SHOW_TBL table.                   |
+0186 3197            314         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0188 D2B6            315         SETB P3.6           ; =======================================|
+                     316             
+018A C2B7            317         CLR P3.7            ; ======== decimal ======================|
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     6
+
+018C EA              318         MOV A, R2           ; set P3.6 to low, get value from R1,    |
+018D 93              319         MOVC A, @A+DPTR     ; and get seven seg's display signal     |
+018E F590            320         MOV P1, A           ; from SHOW_TBL table.                   |
+0190 3197            321         CALL DEL_330_US     ; delay 330 us, and stop display.        |
+0192 D2B7            322         SETB P3.7           ; ======== decimal ======================|
+                     323             
+0194 D0D0            324         POP PSW             ; pop PSW 
+0196 22              325         RET
+                     326     
+                     327     
+                     328     
+                     329     
+0197                 330     DEL_330_US:             ; Delay 330 us
+0197 7FA4            331         MOV R7, #164
+0199 DFFE            332         DJNZ R7, $      
+019B 22              333         RET 
+                     334     
+019C                 335     KEYB_TBL: ; keyboard table 
+019C 01              336         DB 01H    
+019D 02              337         DB 02H
+019E 03              338         DB 03H
+019F 0A              339         DB 0AH
+01A0 04              340         DB 04H
+01A1 05              341         DB 05H
+01A2 06              342         DB 06H
+01A3 0B              343         DB 0BH
+01A4 07              344         DB 07H
+01A5 08              345         DB 08H
+01A6 09              346         DB 09H
+01A7 0C              347         DB 0CH
+01A8 0E              348         DB 0EH
+01A9 00              349         DB 00H
+01AA 0F              350         DB 0FH
+01AB 0D              351         DB 0DH
+                     352     
+01AC                 353     SHOW_TBL: ; seven seg table
+01AC C0              354         DB 11000000B    ; 0
+01AD F9              355         DB 11111001B    ; 1
+01AE A4              356         DB 10100100B    ; 2
+01AF B0              357         DB 10110000B    ; 3
+01B0 99              358         DB 10011001B    ; 4
+01B1 92              359         DB 10010010B    ; 5
+01B2 82              360         DB 10000010B    ; 6
+01B3 F8              361         DB 11111000B    ; 7
+01B4 80              362         DB 10000000B    ; 8
+01B5 90              363         DB 10010000B    ; 9
+01B6 FF              364         DB 11111111B    ; no signal
+                     365     END
+A51 MACRO ASSEMBLER  TONE                                                                 11/15/2022 13:32:52 PAGE     7
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+ALL_ZERO . . . . .  C ADDR   011BH   A   
+COUNT_DOWN . . . .  C ADDR   00F9H   A   
+DECREASE_LOOP. . .  C ADDR   00FDH   A   
+DECREASE_R0. . . .  C ADDR   0111H   A   
+DECREASE_R1. . . .  C ADDR   0109H   A   
+DEC_CURRENT. . . .  C ADDR   00D8H   A   
+DEL_100_MS . . . .  C ADDR   0126H   A   
+DEL_300_MS . . . .  C ADDR   0124H   A   
+DEL_330_US . . . .  C ADDR   0197H   A   
+DEL_500_US . . . .  C ADDR   0128H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+INC_CURRENT. . . .  C ADDR   00CBH   A   
+IT0. . . . . . . .  B ADDR   0088H.0 A   
+KEYB_TBL . . . . .  C ADDR   019CH   A   
+KEY_IN . . . . . .  C ADDR   00B1H   A   
+KEY_OUT. . . . . .  C ADDR   00ADH   A   
+LOOP3. . . . . . .  C ADDR   004BH   A   
+MAIN . . . . . . .  C ADDR   0070H   A   
+MARQUEE. . . . . .  C ADDR   0044H   A   
+NEXT1. . . . . . .  C ADDR   00BDH   A   
+NEXT2. . . . . . .  C ADDR   00C2H   A   
+NEXT3. . . . . . .  C ADDR   00C7H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+POP_AND_OUT. . . .  C ADDR   00E5H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+RS0. . . . . . . .  B ADDR   00D0H.3 A   
+SAVE_KEY_IN. . . .  C ADDR   00E9H   A   
+SCAN . . . . . . .  C ADDR   0093H   A   
+SHOW_LOOP. . . . .  C ADDR   00FFH   A   
+SHOW_LOOP0 . . . .  C ADDR   0057H   A   
+SHOW_SEG . . . . .  C ADDR   0131H   A   
+SHOW_SEG0. . . . .  C ADDR   0009H   A   
+SHOW_SEG2. . . . .  C ADDR   0164H   A   
+SHOW_TBL . . . . .  C ADDR   01ACH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+START_SCAN . . . .  C ADDR   008DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

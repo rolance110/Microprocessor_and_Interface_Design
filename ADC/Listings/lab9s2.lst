@@ -1,0 +1,48 @@
+C51 COMPILER V9.60.0.0   LAB9S2                                                            11/22/2022 17:03:06 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LAB9S2
+OBJECT MODULE PLACED IN .\Objects\lab9s2.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lab9s2.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\la
+                    -b9s2.lst) TABS(2) OBJECT(.\Objects\lab9s2.obj)
+
+line level    source
+
+   1          #include <regx51.h>
+   2          void main( )
+   3          {
+   4   1      IT0 = 0; //enable a low-level signal on external interrupt
+   5   1      EX0 = 1; //enable INT0
+   6   1      EA = 1; //enable interrupt
+   7   1      P3_4 = 0; //WR=0,clean the data
+   8   1      P3_4 = 1; //WR=1,analog convert to digital
+   9   1      while(1); //infinite loop
+  10   1      }
+  11          void int_0(void)interrupt 0 //INT0 interrupt function
+  12          {
+  13   1      P3_5 = 0; //RD=0,read the digital data
+  14   1      if (P1 >256 / 2)
+  15   1      {
+  16   2      P2 = 0; //LED on
+  17   2      }
+  18   1      else{
+  19   2      P2 = 255; //LED off
+  20   2      }
+  21   1      P3_5 = 1; //RD=1
+  22   1      P3_4 = 0; //WR=0,clean the data
+  23   1      P3_4 = 1; //WR=1,analog convert to digital
+  24   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     56    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

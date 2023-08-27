@@ -1,0 +1,82 @@
+A51 MACRO ASSEMBLER  TE1                                                                  11/07/2022 20:54:28 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\TE1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE TE1.A51 SET(SMALL) DEBUG PRINT(.\Listings\TE1.lst) OBJECT(.\Objects\TE1
+                      .obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     
+                       3     
+                       4     
+0000                   5                      ORG 00H
+0000 900036            6              MOV DPTR,#TABLE                         
+0003 7805              7     START:   MOV R0,#5        
+0005 7904              8                      MOV R1,#4              
+0007 7A08              9                      MOV R2,#8               
+0009 7C07             10                      MOV R4,#7
+                      11                      
+000B 7580FE           12     LLED:    MOV P0,#11111110B
+000E E8               13                      MOV A,R0           ;lighten number
+000F 93               14              MOVC A,@A+DPTR
+0010 F590             15                      MOV P1,A  ;;;  
+0012 1131             16                      CALL DELAY1
+                      17                      
+0014 7580FD           18                      MOV P0,#11111101B
+0017 E9               19                      MOV A,R1           ;lighten number
+0018 93               20              MOVC A,@A+DPTR
+0019 F590             21                      MOV P1,A  ;;;  
+001B 1131             22                      CALL DELAY1
+                      23                      
+001D 7580FB           24                      MOV P0,#11111011B
+0020 EA               25                      MOV A,R2           ;lighten number
+0021 93               26              MOVC A,@A+DPTR
+0022 F590             27                      MOV P1,A  ;;;  
+0024 1131             28                      CALL DELAY1
+                      29                      
+0026 7580F7           30                      MOV P0,#11110111B
+0029 EC               31                      MOV A,R4           ;lighten number
+002A 93               32              MOVC A,@A+DPTR
+002B F590             33                      MOV P1,A  ;;;  
+002D 1131             34                      CALL DELAY1
+                      35                      
+002F 80DA             36                      JMP LLED
+                      37                      
+0031 7BFA             38     DELAY1:  MOV R3,#250
+0033 DBFE             39                      DJNZ R3,$
+0035 22               40                      RET
+                      41                      
+0036 C0               42     TABLE:   DB 11000000B  
+0037 F9               43                      DB 11111001B  
+0038 A4               44                      DB 10100100B  
+0039 B0               45                      DB 10110000B  
+003A 99               46                      DB 10011001B  
+003B 92               47                      DB 10010010B  
+003C 82               48                      DB 10000010B  
+003D D8               49                      DB 11011000B  
+003E 80               50                      DB 10000000B  
+003F 98               51                      DB 10011000B  
+                      52                      END
+A51 MACRO ASSEMBLER  TE1                                                                  11/07/2022 20:54:28 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   0031H   A   
+LLED . . . . . . .  C ADDR   000BH   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+START. . . . . . .  C ADDR   0003H   A   
+TABLE. . . . . . .  C ADDR   0036H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
