@@ -1,0 +1,3 @@
+".\Objects\RETEST.obj" 
+TO ".\Objects\retest" 
+PRINT(".\Listings\retest.m51") RAMSIZE(256) 
