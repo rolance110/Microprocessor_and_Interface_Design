@@ -1,0 +1,54 @@
+C51 COMPILER V9.60.0.0   LAB8S1                                                            11/29/2022 13:42:27 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LAB8S1
+OBJECT MODULE PLACED IN .\Objects\lab8s1.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lab8s1.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\la
+                    -b8s1.lst) TABS(2) OBJECT(.\Objects\lab8s1.obj)
+
+line level    source
+
+   1          #include <regx51.h>
+   2          void init_uart(void); //??UART?????
+   3          char recivevalue; //???????
+   4          
+   5          void main(){
+   6   1        init_uart(); //??UART
+   7   1        while(1);
+   8   1      }
+   9          
+  10          void init_uart(void){
+  11   1       SCON=0x50; //??SCON????????mode1
+  12   1       TMOD=0x20; //??TIMER1?Mode2
+  13   1       TH1=0xe6; //baud??? 1200
+  14   1       TR1=1; //TCON?Timer1????? TR1?1
+  15   1       IE=0x90; //??UART???? EA?ES???1
+  16   1      }
+  17          
+  18          void init_uart1(void)interrupt 4
+  19          {
+  20   1        while(RI == 0); //??????
+  21   1        RI=0;
+  22   1        recivevalue=SBUF; //????SBUF????recivevalue?
+  23   1        P2 = recivevalue; //??????LED????
+  24   1        
+  25   1        if(recivevalue == 'q'){
+  26   2          SBUF= recivevalue; //???????
+  27   2          while(TI==0); //??????
+  28   2          TI=0; //?TI????0
+  29   2        }
+  30   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     52    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
