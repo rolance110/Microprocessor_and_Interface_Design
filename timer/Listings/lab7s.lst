@@ -1,0 +1,65 @@
+C51 COMPILER V9.60.0.0   LAB7S                                                             10/31/2022 10:18:53 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LAB7S
+OBJECT MODULE PLACED IN .\Objects\lab7s.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lab7s.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\lab
+                    -7s.lst) TABS(2) OBJECT(.\Objects\lab7s.obj)
+
+line level    source
+
+   1          #include <regx51.h>      //include header file for 8051
+   2          #define TH0_init 0x06 //TH 0 _ 256 250
+   3          #define TL0_init 0x06 //TL 0 _init 256 250
+   4          #define Timer0_int_exe_time 2000 //the parameter can be changed
+   5          void delay(unsigned char);
+   6          int counter;
+   7          
+   8          void main(){
+   9   1        TMOD=0x02; //set timer 0 to mode 2 8 bits and auto reload)
+  10   1        IP=0x02;   //timer 0interrupt has high priority
+  11   1        IE=0x82; //enable timer 0interrupt
+  12   1        P2=0xff;
+  13   1      
+  14   1        TL0=TL0_init;
+  15   1        TH0=TH0_init;//set TH 0 TL 0
+  16   1      
+  17   1        TCON=0x10; //enable timer 0
+  18   1      
+  19   1        while(1){
+  20   2          delay(5); //adjust this parameter to match timer
+  21   2          P2_0=~P2_0; //inverse P2_0 
+  22   2        }
+  23   1      }
+  24          void timer0_interrupt(void)interrupt 1{ ////‘interrupt 1 is int vector of INT 0
+  25   1        counter++;
+  26   1        if (counter == Timer0_int_exe_time){ //250 clock cycle 2000 0 5 second
+  27   2          P2_1 =~P2_1;// inverse P 2 0
+  28   2          counter=0;
+  29   2        }
+  30   1      }
+  31          //delay function
+  32          void delay(unsigned char a){
+  33   1        unsigned char i,j;
+  34   1        for(;a>0;a--)
+  35   1          for(i=0;i<151;i++)
+  36   1            for(j=0;j<59;j++);
+  37   1      }
+  38          /*
+  39          void delay(unsigned char a){
+  40            while(t--);
+  41          }*/
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    107    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

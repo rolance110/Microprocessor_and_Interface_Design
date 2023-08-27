@@ -1,0 +1,63 @@
+A51 MACRO ASSEMBLER  LAB5TH1                                                              10/18/2022 16:34:29 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab5th1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab5th1.A51 SET(SMALL) DEBUG PRINT(.\Listings\lab5th1.lst) OBJECT(.\Obj
+                      ects\lab5th1.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG     0000h
+0000 802E              2                     JMP     LOOP                    ;jump into loop
+0030                   3                     ORG     0030h
+                       4                             
+0030 758132            5     LOOP:   MOV     SP,#32H                 ;SP ==32H
+0033 74FC              6                     MOV     A,#11111100B            ;A ==#0xfe ,11111110
+0035 F5A0              7                     MOV     P2,A                    ;P2=A
+0037 D291              8                     SETB P1.1               ;set p1.0 to high
+0039 7808              9                     MOV R0,#8D                      ;set the execution times of marquee (eight 
+                             LED)
+                      10                     
+003B 309102           11                     JNB     P1.1,MARQUEE    ;jump into marquee when p1.0 is low (if put down bo
+                             ttom)
+003E 80F0             12                     JMP     LOOP                    ;infinite loop
+                      13     
+0040 C000             14     MARQUEE:        PUSH 00h
+0042 78FA             15                             MOV R0,#250D
+0044 114F             16                             CALL DELAY1
+0046 D000             17                             POP 00h
+0048 23               18                             RL A
+0049 F5A0             19                             MOV P2,A
+004B D8F3             20                             DJNZ R0,MARQUEE
+004D 80E1             21                             JMP LOOP
+004F C000             22     DELAY1:         PUSH 00h
+0051 78FA             23                             MOV R0,#250D
+0053 115A             24                             CALL DELAY2
+0055 D000             25                             POP 00h
+0057 D8F6             26                             DJNZ R0,DELAY1
+0059 22               27                             RET
+005A D8FE             28     DELAY2:         DJNZ R0,DELAY2
+005C 22               29                             RET
+                      30                             END
+A51 MACRO ASSEMBLER  LAB5TH1                                                              10/18/2022 16:34:29 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   004FH   A   
+DELAY2 . . . . . .  C ADDR   005AH   A   
+LOOP . . . . . . .  C ADDR   0030H   A   
+MARQUEE. . . . . .  C ADDR   0040H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

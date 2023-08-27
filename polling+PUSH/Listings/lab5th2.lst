@@ -1,0 +1,100 @@
+A51 MACRO ASSEMBLER  LAB5TH2                                                              11/07/2022 17:07:15 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab5th2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab5th2.A51 SET(SMALL) DEBUG PRINT(.\Listings\lab5th2.lst) OBJECT(.\Obj
+                      ects\lab5th2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                     ORG     0000h
+0000 758132            2                     MOV     SP,#32H
+0003 783C              3                     MOV R0,#00111100B
+0005 C000              4                     PUSH 00H
+                       5                     
+0007 8027              6                     JMP     LOOP                    ;jump into loop
+0030                   7                     ORG     0030h   
+0030 758133            8     LOOP:   MOV     SP,#33H                 ;SP ==32H
+0033 74FC              9                     MOV     A,#11111100B            ;A ==#0xfe ,11111110
+0035 F5A0             10                     MOV     P2,A                    ;P2=A
+0037 D292             11                     SETB P1.2
+0039 D293             12                     SETB P1.3       
+003B 8000             13                     JMP     RUNLED                  ;infinite loop
+                      14     
+003D 309208           15     RUNLED:         JNB     P1.2,PUSHSTATE  ;jump into marquee when p1.0 is low (if put down bo
+                             ttom)
+0040 30930C           16     EPU:            JNB     P1.3,POPSTATE   ;jump into marquee when p1.0 is low (if put down bo
+                             ttom)
+                      17                             
+0043 23               18                             RL A            ;left rotate
+0044 F5A0             19                             MOV P2,A        ;set the value of A into P2
+0046 80F5             20                             JMP RUNLED        ;end of MARQUEE, back to LOOP
+                      21     
+0048 1162             22     PUSHSTATE:      CALL DEBOUNCE
+004A F8               23                             MOV R0,A
+004B C000             24                             PUSH 00h
+004D 80F1             25                             JMP EPU
+                      26                             
+                      27                             
+004F 116B             28     POPSTATE:       CALL delay
+0051 D000             29     POPSTATE2:      POP 00h
+0053 B83C06           30                             CJNE R0,#00111100B,GO
+0056 116B             31                             CALL delay
+0058 116B             32                             CALL delay
+005A 8018             33                             JMP FINISH
+                      34     
+005C 88A0             35     GO:                     MOV P2,R0        ;set the value of A into P2
+005E 116B             36                             CALL delay
+0060 80EF             37                             JMP POPSTATE2
+                      38     
+                      39     
+                      40     
+0062 7C32             41     DEBOUNCE:       MOV R4, #50 ; move 50 times into R4
+0064 7B7D             42     DE_500_us:      MOV R3, #125 ; move 250 times into R3
+0066 DBFE             43                             DJNZ R3, $ ; jump to itself R3 times
+0068 DCFA             44                             DJNZ R4, DE_500_us ; delay 25ms
+006A 22               45                             RET
+                      46                             
+006B 7CFA             47     delay:          MOV R4, #250 ; move 50 times into R4
+006D 7BFA             48     delayloop:      MOV R3, #250 ; move 250 times into R3
+006F DBFE             49                             DJNZ R3, $ ; jump to itself R3 times
+0071 DCFA             50                             DJNZ R4, delayloop ; delay 25ms
+0073 22               51                             RET
+                      52                             
+0074 74FF             53     FINISH:         MOV     A,#11111111B            ;A ==#0xfe ,11111110
+0076 F5A0             54                             MOV     P2,A
+                      55                             
+A51 MACRO ASSEMBLER  LAB5TH2                                                              11/07/2022 17:07:15 PAGE     2
+
+                      56                             
+                      57                             END
+A51 MACRO ASSEMBLER  LAB5TH2                                                              11/07/2022 17:07:15 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DEBOUNCE . . . . .  C ADDR   0062H   A   
+DELAY. . . . . . .  C ADDR   006BH   A   
+DELAYLOOP. . . . .  C ADDR   006DH   A   
+DE_500_US. . . . .  C ADDR   0064H   A   
+EPU. . . . . . . .  C ADDR   0040H   A   
+FINISH . . . . . .  C ADDR   0074H   A   
+GO . . . . . . . .  C ADDR   005CH   A   
+LOOP . . . . . . .  C ADDR   0030H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+POPSTATE . . . . .  C ADDR   004FH   A   
+POPSTATE2. . . . .  C ADDR   0051H   A   
+PUSHSTATE. . . . .  C ADDR   0048H   A   
+RUNLED . . . . . .  C ADDR   003DH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

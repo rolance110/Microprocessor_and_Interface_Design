@@ -1,0 +1,60 @@
+C51 COMPILER V9.60.0.0   LAB7T                                                             11/01/2022 17:12:24 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LAB7T
+OBJECT MODULE PLACED IN .\Objects\lab7t.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE lab7t.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\lab
+                    -7t.lst) TABS(2) OBJECT(.\Objects\lab7t.obj)
+
+line level    source
+
+   1          #include <regx51.h>      //include header file for 8051
+   2          #define TH0_init 0x06 //TH 0 _ 256 250
+   3          #define TL0_init 0x06 //TL 0 _init 256 250
+   4          void delay(unsigned char);
+   5          
+   6          void main(){
+   7   1        TMOD=0x09; //set timer 0 to mode 2 8 bits and auto reload)
+   8   1        IP=0x02;   //timer 0interrupt has high priority
+   9   1        IE=0x82; //enable timer 0interrupt
+  10   1        TCON=0x10; //enable timer 0
+  11   1        
+  12   1        P2=0xfe;
+  13   1      
+  14   1        while(1){ 
+  15   2          delay(1);
+  16   2        }
+  17   1      
+  18   1      }
+  19          void timer0_interrupt(void)interrupt 1{ ////‘iinterrupt 1 is int vector of INT 0
+  20   1          if(P2 == 0x7f){
+  21   2            P2 = 0xfe;
+  22   2          }
+  23   1          else{
+  24   2            P2=P2<<1;
+  25   2            P2_0=1;
+  26   2          }
+  27   1          delay(5);
+  28   1      }
+  29          
+  30          //delay function
+  31          void delay(unsigned char a){
+  32   1        unsigned char i,j;
+  33   1        for(;a>0;a--)
+  34   1          for(i=0;i<151;i++)
+  35   1            for(j=0;j<59;j++);
+  36   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    147    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

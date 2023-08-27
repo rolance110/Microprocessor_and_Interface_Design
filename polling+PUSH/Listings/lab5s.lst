@@ -1,0 +1,66 @@
+A51 MACRO ASSEMBLER  LAB5S                                                                11/07/2022 17:23:29 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\lab5s.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lab5s.A51 SET(SMALL) DEBUG PRINT(.\Listings\lab5s.lst) OBJECT(.\Objects
+                      \lab5s.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1                             ORG 0000h
+0000 802E              2                             JMP LOOP
+                       3                             
+0030                   4                             ORG 0030h
+0030                   5     LOOP:            
+0030 758132            6                             MOV SP,#32h               ;sp @ 32H
+                       7                             
+0033 74FE              8                             MOV A,#0xFE
+0035 F5A0              9                             MOV P2,A
+0037 7808             10                             MOV R0,#8
+                      11                             
+0039 D291             12                             SETB P1.1
+003B 309102           13                             JNB P1.1,MARQUEE
+                      14                             
+003E 80F0             15                             JMP LOOP                        
+                      16                             
+0040                  17     MARQUEE:         
+0040 C000             18                             PUSH 00h        ;save R0 value
+0042 78FA             19                             MOV R0,#250D
+0044 114F             20                             CALL DELAY1
+0046 D000             21                             POP 00h         ;read R0 from stack
+                      22                             
+0048 23               23                             RL A
+0049 F5A0             24                             MOV P2,A
+004B D8F3             25                             DJNZ R0,MARQUEE
+004D 80E1             26                             JMP LOOP
+004F C000             27     DELAY1:         PUSH 00h
+0051 78FA             28                             MOV R0,#250D
+0053 115A             29                             CALL DELAY2
+0055 D000             30                             POP 00h
+0057 D8F6             31                             DJNZ R0,DELAY1
+0059 22               32                             RET
+005A D8FE             33     DELAY2:         DJNZ R0,DELAY2
+005C 22               34                             RET
+                      35                             END
+A51 MACRO ASSEMBLER  LAB5S                                                                11/07/2022 17:23:29 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY1 . . . . . .  C ADDR   004FH   A   
+DELAY2 . . . . . .  C ADDR   005AH   A   
+LOOP . . . . . . .  C ADDR   0030H   A   
+MARQUEE. . . . . .  C ADDR   0040H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
